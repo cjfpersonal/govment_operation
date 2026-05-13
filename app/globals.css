@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0c1222;
+  --surface: #141c2f;
+  --border: #243049;
+  --accent: #3b82f6;
+  --accent-dim: #1d4ed8;
+  --text: #e8edf7;
+  --muted: #8b9cb8;
+}
+
+body {
+  color: var(--text);
+  background: linear-gradient(180deg, #0a0f1a 0%, var(--bg) 40%);
+  min-height: 100vh;
+}

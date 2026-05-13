@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+dist-static-assets
+.env*.local
+npm-debug.log*
+.DS_Store
