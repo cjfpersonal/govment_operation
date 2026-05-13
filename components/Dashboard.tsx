@@ -14,6 +14,7 @@ import {
   type Industry,
 } from "@/lib/match";
 import { PolicyRiskModal } from "@/components/PolicyRiskModal";
+import { withBasePath } from "@/lib/base-path";
 
 const DEPT_OPTIONS: { id: DepartmentId; short: string }[] = [
   { id: "gxj", short: "工信" },
@@ -77,7 +78,9 @@ export function Dashboard() {
     setLoading(true);
     setErr(null);
     try {
-      const url = nocache ? "/api/policies?nocache=1" : "/api/policies";
+      const url = nocache
+        ? withBasePath("/api/policies?nocache=1")
+        : withBasePath("/api/policies");
       const res = await fetch(url);
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));

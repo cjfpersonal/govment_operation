@@ -7,9 +7,20 @@ import type { NextConfig } from "next";
 const assetPrefix =
   process.env.ASSET_PREFIX?.replace(/\/+$/, "") || undefined;
 
+/** 挂在站点子路径时设置，如 `/gov`（不要末尾 /）。须与 Nginx `location ^~ /gov/` 一致，且构建与运行一致 */
+const rawBase = process.env.NEXT_BASE_PATH?.trim();
+const basePath =
+  rawBase && rawBase !== "/"
+    ? `/${rawBase.replace(/^\/+|\/+$/g, "")}`
+    : undefined;
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   eslint: { ignoreDuringBuilds: true },
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath ?? "",
+  },
+  ...(basePath ? { basePath } : {}),
   ...(assetPrefix ? { assetPrefix } : {}),
   /** 设为 1 时打 Docker / 单机 Node 包：`.next/standalone`，需再执行 scripts/copy-standalone-assets.sh */
   ...(process.env.STANDALONE === "1" ? { output: "standalone" as const } : {}),

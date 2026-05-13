@@ -7,7 +7,7 @@
     "build": "next build",
     "build:static": "next build && bash scripts/prepare-static-assets.sh",
     "build:standalone": "STANDALONE=1 next build && bash scripts/copy-standalone-assets.sh",
-    "start": "next start",
+    "start": "next start -p 8888",
     "start:standalone": "node .next/standalone/server.js",
     "pack:static": "bash scripts/prepare-static-assets.sh",
     "lint": "next lint"

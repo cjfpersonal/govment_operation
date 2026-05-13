@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { PolicyItem } from "@/lib/types";
 import type { PolicyRiskAnalysis } from "@/lib/policy-risk-analysis";
+import { withBasePath } from "@/lib/base-path";
 
 type Props = {
   item: PolicyItem | null;
@@ -21,7 +22,7 @@ export function PolicyRiskModal({ item, open, onClose }: Props) {
     setErr(null);
     setData(null);
     try {
-      const res = await fetch("/api/analyze-policy", {
+      const res = await fetch(withBasePath("/api/analyze-policy"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ item }),
