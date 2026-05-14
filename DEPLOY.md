@@ -1,3 +1,7 @@
+
+/usr/local/lib/node_modules/pm2/bin/pm2 start npm --name sz-policy-monitor -- start
+
+
 upstream sz_policy_next {
   server 127.0.0.1:8888;
   keepalive 64;
