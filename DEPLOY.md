@@ -1,10 +1,14 @@
-
-/usr/local/lib/node_modules/pm2/bin/pm2 start npm --name sz-policy-monitor -- start
-
+# PM2（在项目根执行，勿粘贴进 nginx）：HOSTNAME=0.0.0.0 PORT=8888 pm2 start npm --name sz-policy-monitor -- start
 
 upstream sz_policy_next {
   server 127.0.0.1:8888;
   keepalive 64;
+}
+
+server {
+  listen 80;
+  server_name jyera.com;
+  return 301 https://$host$request_uri;
 }
 
 server {
@@ -22,6 +26,11 @@ server {
   gzip on;
   gzip_types text/plain text/css application/json application/javascript text/xml application/xml;
 
+  # Next 使用 basePath /gov 时，上游必须收到带 /gov 的 URI，故 proxy_pass 不要用 http://...:8888/ 尾斜杠（否则会剥前缀，变成 /_next、/api 对不上）
+  location = /gov {
+    return 301 /gov/;
+  }
+
   location ^~ /gov/ {
     proxy_pass http://sz_policy_next;
     proxy_http_version 1.1;
@@ -33,6 +42,7 @@ server {
     proxy_send_timeout 120s;
   }
 
+  # 只保留一个 /boss/，避免与 location /boss 重复
   location ^~ /boss/ {
     alias /home/lighthouse/dist-boss/;
     index index.html;
