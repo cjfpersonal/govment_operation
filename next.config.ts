@@ -1,18 +1,28 @@
 import type { NextConfig } from "next";
 
 /**
- * 不设 `ASSET_PREFIX` 时无 `assetPrefix`，资源与页面同源，路径为站点根下的 `/_next/static`。
- * 仅当静态文件要从「别的完整 URL 根」加载时再设（不要末尾 /）。
+ * 不设 `ASSET_PREFIX` 时无 `assetPrefix`，静态资源与 `basePath` 同源。
+ * 仅当 JS/CSS 要从另一完整 URL 根加载时再设（不要末尾 /）。
  */
 const assetPrefix =
   process.env.ASSET_PREFIX?.replace(/\/+$/, "") || undefined;
 
-/** 挂在站点子路径时设置，如 `/gov`（不要末尾 /）。须与 Nginx `location ^~ /gov/` 一致，且构建与运行一致 */
-const rawBase = process.env.NEXT_BASE_PATH?.trim();
-const basePath =
-  rawBase && rawBase !== "/"
-    ? `/${rawBase.replace(/^\/+|\/+$/g, "")}`
-    : undefined;
+/**
+ * 默认 `/gov` 仅作用于生产构建（`next build` 时 `NODE_ENV` 为 `production`）；
+ * `next dev` 不设 `basePath`，本地仍为 `http://localhost:3000/`。
+ * 生产环境若要部署在域名根，构建前设置 `NEXT_BASE_PATH=/`。
+ */
+function resolveBasePath(): string | undefined {
+  const v = process.env.NEXT_BASE_PATH;
+  if (v !== undefined) {
+    const t = v.trim();
+    if (t === "" || t === "/") return undefined;
+    return `/${t.replace(/^\/+|\/+$/g, "")}`;
+  }
+  return process.env.NODE_ENV === "production" ? "/gov" : undefined;
+}
+
+const basePath = resolveBasePath();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
