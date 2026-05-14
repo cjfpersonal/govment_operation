@@ -8,18 +8,13 @@ const rawAssetPrefix =
   process.env.ASSET_PREFIX?.replace(/\/+$/, "") || undefined;
 
 /**
- * 默认 `/gov` 仅作用于生产构建（`next build` 时 `NODE_ENV` 为 `production`）；
- * `next dev` 不设 `basePath`，本地仍为 `http://localhost:3000/`。
- * 生产环境若要部署在域名根，构建前设置 `NEXT_BASE_PATH=/`。
+ * 仅当显式设置 `NEXT_BASE_PATH`（如 `/gov`）时启用 `basePath`。
+ * 不设时静态资源与 API 为 `/_next/...`、`/api/...`（与 Nginx 下「根路径反代 + /gov 剥前缀」方案一致）。
  */
 function resolveBasePath(): string | undefined {
-  const v = process.env.NEXT_BASE_PATH;
-  if (v !== undefined) {
-    const t = v.trim();
-    if (t === "" || t === "/") return undefined;
-    return `/${t.replace(/^\/+|\/+$/g, "")}`;
-  }
-  return process.env.NODE_ENV === "production" ? "/gov" : undefined;
+  const v = process.env.NEXT_BASE_PATH?.trim();
+  if (!v || v === "/") return undefined;
+  return `/${v.replace(/^\/+|\/+$/g, "")}`;
 }
 
 const basePath = resolveBasePath();
